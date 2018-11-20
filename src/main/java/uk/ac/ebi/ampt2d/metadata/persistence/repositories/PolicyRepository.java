@@ -22,15 +22,14 @@ import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.data.rest.core.annotation.RepositoryRestResource;
 import org.springframework.data.rest.core.annotation.RestResource;
-import uk.ac.ebi.ampt2d.metadata.persistence.entities.Dac;
+import uk.ac.ebi.ampt2d.metadata.persistence.entities.Policy;
 
 import java.util.List;
 
 @RepositoryRestResource
-public interface DacRepository extends PagingAndSortingRepository<Dac, Long> {
+public interface PolicyRepository extends PagingAndSortingRepository<Policy, Long> {
 
-    @ApiOperation(value = "Get the latest version of DAC based on accession")
+    @ApiOperation(value = "Get the latest version of Policy based on accession")
     @RestResource(path = "/accession")
-    List<Dac> findFirstByAccessionVersionEntityId_AccessionOrderByAccessionVersionEntityId_VersionDesc(@Param("accession") String accession);
-
+    List<Policy> findFirstByAccessionVersionEntityId_AccessionOrderByAccessionVersionEntityId_VersionDesc(@Param("accession") String accession);
 }

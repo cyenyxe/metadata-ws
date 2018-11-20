@@ -26,62 +26,69 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
-import java.util.List;
+import java.util.Objects;
 
 @Entity
-@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"accession", "version"})})
-public class Dac extends Auditable<Long> {
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"db", "accession", "version"})})
+public class CrossReference extends Auditable<Long> implements Comparable<CrossReference> {
 
-    @ApiModelProperty(position = 1, value = "Dac auto generated id", required = true, readOnly = true)
+    @ApiModelProperty(position = 1, value = "Cross reference auto generated id", required = true, readOnly = true)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
     @ApiModelProperty(position = 2, required = true)
-    @Valid
     @Embedded
-    private AccessionVersionEntityId accessionVersionEntityId;
+    private DbAccessionVersionId dbAccessionVersionId;
 
-    @ApiModelProperty(position = 3, required = true)
+    @ApiModelProperty(position = 3)
     @Size(min = 1, max = 255)
-    @NotNull
     @JsonProperty
-    @Column(nullable = false)
-    private String title;
+    @Column
+    private String label;
 
-    @ApiModelProperty(position = 4, required = true)
+    @ApiModelProperty(position = 4)
     @Size(min = 1, max = 255)
-    @NotNull
     @JsonProperty
-    @Column(nullable = false)
-    private String center;
-
-    @ApiModelProperty(position = 5, dataType = "java.lang.String", notes = "Url to main contact")
-    @JsonProperty
-    @ManyToOne(optional = false)
-    private Contact mainContact;
-
-    @ManyToMany
-    private List<Contact> otherContacts;
-
-    @OneToMany
-    private List<WebResource> resources;
+    @Column
+    private String url;
 
     public Long getId() {
         return id;
     }
 
-    public AccessionVersionEntityId getAccessionVersionEntityId() {
-        return accessionVersionEntityId;
+    public DbAccessionVersionId getDbAccessionVersionId() {
+        return dbAccessionVersionId;
+    }
+
+    public String getLabel() {
+        return label;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CrossReference that = (CrossReference) o;
+        return dbAccessionVersionId != null && Objects.equals(dbAccessionVersionId, that.dbAccessionVersionId);
+    }
+
+    @Override
+    public int hashCode() {
+        return dbAccessionVersionId.hashCode();
+    }
+
+    @Override
+    public int compareTo(CrossReference o) {
+        return dbAccessionVersionId.compareTo(o.getDbAccessionVersionId());
     }
 
 }

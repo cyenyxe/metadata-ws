@@ -26,7 +26,6 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
@@ -38,40 +37,47 @@ import java.util.List;
 
 @Entity
 @Table(uniqueConstraints = {@UniqueConstraint(columnNames = {"accession", "version"})})
-public class Dac extends Auditable<Long> {
+public class Policy extends Auditable<Long>  {
 
-    @ApiModelProperty(position = 1, value = "Dac auto generated id", required = true, readOnly = true)
+    @ApiModelProperty(position = 1, value = "Policy auto generated id", required = true, readOnly = true)
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private long id;
 
-    @ApiModelProperty(position = 2, required = true)
+    @ApiModelProperty(position = 1, required = true)
     @Valid
     @Embedded
     private AccessionVersionEntityId accessionVersionEntityId;
+
+    @ApiModelProperty(position = 2)
+    @Size(min = 1, max = 255)
+    @JsonProperty
+    @Column
+    private String title;
 
     @ApiModelProperty(position = 3, required = true)
     @Size(min = 1, max = 255)
     @NotNull
     @JsonProperty
     @Column(nullable = false)
-    private String title;
-
-    @ApiModelProperty(position = 4, required = true)
-    @Size(min = 1, max = 255)
-    @NotNull
-    @JsonProperty
-    @Column(nullable = false)
     private String center;
 
-    @ApiModelProperty(position = 5, dataType = "java.lang.String", notes = "Url to main contact")
+    @ApiModelProperty(position = 4, dataType = "java.lang.String", notes = "Policy text or file")
+    @Size(min = 1, max = 255)
+    @JsonProperty
+    @Column
+    private String content;
+
+    @ApiModelProperty(position = 5, dataType = "java.lang.String", notes = "Url to a DAC")
     @JsonProperty
     @ManyToOne(optional = false)
-    private Contact mainContact;
+    private Dac dac;
 
-    @ManyToMany
-    private List<Contact> otherContacts;
+    @ApiModelProperty(position = 6, dataType = "java.lang.List", notes = "Urls to data use conditions")
+    @JsonProperty
+    @OneToMany
+    private List<Duo> dataUseConditions;
 
     @OneToMany
     private List<WebResource> resources;
@@ -83,5 +89,4 @@ public class Dac extends Auditable<Long> {
     public AccessionVersionEntityId getAccessionVersionEntityId() {
         return accessionVersionEntityId;
     }
-
 }
